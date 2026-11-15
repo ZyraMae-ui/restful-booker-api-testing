@@ -1,0 +1,45 @@
+$kind: http-request
+url: https://restful-booker.herokuapp.com/auth
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"username\": \"admin\",\r
+
+    \  \"password\": \"password123\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "\r
+
+      // Verify successful authentication\r
+
+      pm.test(\"Authentication returns status 200\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      // Extract the authentication token\r
+
+      const response = pm.response.json();\r
+
+      \r
+
+      pm.test(\"Authentication token is generated\", function () {\r
+
+      \    pm.expect(response.token).to.exist;\r
+
+      });\r
+
+      \r
+
+      // Save token automatically\r
+
+      pm.collectionVariables.set(\"token\", response.token);\r\n"
+    language: text/javascript
+order: 1000

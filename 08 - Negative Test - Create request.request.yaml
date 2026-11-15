@@ -1,0 +1,27 @@
+$kind: http-request
+url: https://restful-booker.herokuapp.com/booking
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \    \"firstname\": \"Sally\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Incomplete booking is not accepted\", function () {\r
+
+      \    pm.expect(pm.response.code).to.not.equal(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"API should return a client error for incomplete booking\", function () {\r
+
+      \    pm.expect(pm.response.code).to.be.oneOf([400, 422]);\r
+
+      });\r\n"
+    language: text/javascript
+order: 3000

@@ -1,0 +1,139 @@
+$kind: http-request
+url: https://restful-booker.herokuapp.com/booking
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"firstname\": \"Sally\",\r
+
+    \  \"lastname\": \"Brown\",\r
+
+    \  \"totalprice\": 150,\r
+
+    \  \"depositpaid\": true,\r
+
+    \  \"bookingdates\": {\r
+
+    \    \"checkin\": \"2026-12-01\",\r
+
+    \    \"checkout\": \"2026-12-05\"\r
+
+    \  },\r
+
+    \  \"additionalneeds\": \"Breakfast\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "// Extract booking ID from response\r
+
+      const response = pm.response.json();\r
+
+      \r
+
+      pm.test(\"Booking ID is generated\", function () {\r
+
+      \    pm.expect(response.bookingid).to.exist;\r
+
+      });\r
+
+      \r
+
+      // Save booking ID automatically\r
+
+      pm.collectionVariables.set(\"bookingId\", response.bookingid);\r
+
+      \r
+
+      // Status Code Assertion\r
+
+      pm.test(\"Create Booking returns status code 200\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      // JSON Schema Validation\r
+
+      const schema = {\r
+
+      \    type: \"object\",\r
+
+      \    required: [\"bookingid\", \"booking\"],\r
+
+      \    properties: {\r
+
+      \        bookingid: {\r
+
+      \            type: \"number\"\r
+
+      \        },\r
+
+      \        booking: {\r
+
+      \            type: \"object\",\r
+
+      \            required: [\r
+
+      \                \"firstname\",\r
+
+      \                \"lastname\",\r
+
+      \                \"totalprice\",\r
+
+      \                \"depositpaid\",\r
+
+      \                \"bookingdates\",\r
+
+      \                \"additionalneeds\"\r
+
+      \            ],\r
+
+      \            properties: {\r
+
+      \                firstname: { type: \"string\" },\r
+
+      \                lastname: { type: \"string\" },\r
+
+      \                totalprice: { type: \"number\" },\r
+
+      \                depositpaid: { type: \"boolean\" },\r
+
+      \                bookingdates: {\r
+
+      \                    type: \"object\",\r
+
+      \                    required: [\"checkin\", \"checkout\"],\r
+
+      \                    properties: {\r
+
+      \                        checkin: { type: \"string\" },\r
+
+      \                        checkout: { type: \"string\" }\r
+
+      \                    }\r
+
+      \                },\r
+
+      \                additionalneeds: { type: \"string\" }\r
+
+      \            }\r
+
+      \        }\r
+
+      \    }\r
+
+      };\r
+
+      \r
+
+      pm.test(\"Create Booking response matches JSON schema\", function () {\r
+
+      \    pm.response.to.have.jsonSchema(schema);\r
+
+      });"
+    language: text/javascript
+order: 4000

@@ -1,0 +1,17 @@
+$kind: http-request
+url: https://restful-booker.herokuapp.com/booking/2227
+method: PATCH
+headers:
+  Cookie: token=11768bf59bcb2ed
+  Content-Type: application/json
+  Accept: application/json
+body:
+  type: json
+  content: "{\r
+
+    \  \"firstname\": \"James\",\r
+
+    \  \"lastname\": \"Brown\"\r
+
+    }"
+order: 8000
